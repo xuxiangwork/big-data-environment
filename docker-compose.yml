@@ -1,0 +1,38 @@
+#version: '3.1'
+version: '2.3'
+services:
+  cdh5-hive:
+    image: teradatalabs/cdh5-hive
+    container_name: hadoop-master
+    hostname: hadoop-master
+    ports:
+      - 50070:50070
+      - 10000:10000
+      - 8020:8020
+      - 8088:8088
+      - 8032:8032
+      - 19888:19888
+    restart: always
+  hbase:
+    image: dajobe/hbase
+    container_name: hbase-docker
+    hostname: hbase-docker
+    ports:
+      - "9090:9090"
+      - "16010:16010"
+    volumes:
+      - /home/work/data/hbase:/data
+    restart: always
+  hue:
+    image: xuxiangwork/hue
+    container_name: hue
+    ports:
+      - "8888:8888"
+    depends_on:
+      - cdh5-hive
+      - hbase
+    environment:
+      HADOOP_MASTER: cdh5-hive
+      HBASE_DOCKER: hbase
+    restart: always
+
